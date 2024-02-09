@@ -31,7 +31,7 @@ public class ProductEntity {
         this.ownerID = ownerID;
     }
 
-    ProductEntity(ProductDto dto) {
+    public ProductEntity(ProductDto dto) {
         BeanUtils.copyProperties(dto, this);
     }
 }
