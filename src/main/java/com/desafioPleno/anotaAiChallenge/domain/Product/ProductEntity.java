@@ -21,14 +21,14 @@ public class ProductEntity {
     private String description; 
     private float price; 
     private String category; 
-    private String ownerID;
+    private String ownerId;
     
-    ProductEntity(String title, String description, float price, String category, String ownerID) {
+    ProductEntity(String title, String description, float price, String category, String ownerId) {
         this.title = title;
         this.description = description;
         this.price = price;
         this.category = category;
-        this.ownerID = ownerID;
+        this.ownerId = ownerId;
     }
 
     public ProductEntity(ProductDto dto) {

@@ -40,6 +40,8 @@ public class ProductService {
     }
 
     public ProductDto update(ProductDto productDto) {
+        productRepository.findById(productDto.getId()).orElseThrow(ProductNotFoundException::new);
+
         ProductEntity productEntity = new ProductEntity(productDto);
         return new ProductDto(productRepository.save(productEntity));
     }

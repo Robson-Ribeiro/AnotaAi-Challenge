@@ -19,7 +19,7 @@ public class CategoryDto {
     @NotBlank
     private String description;
     @NotBlank
-    private String ownerID;
+    private String ownerId;
 
     public CategoryDto(CategoryEntity entity) {
         BeanUtils.copyProperties(entity, this);

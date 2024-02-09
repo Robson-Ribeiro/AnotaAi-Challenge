@@ -19,12 +19,12 @@ public class CategoryEntity {
 
     private String title;
     private String description;
-    private String ownerID;
+    private String ownerId;
 
-    public CategoryEntity(String title, String description, String ownerID) {
+    public CategoryEntity(String title, String description, String ownerId) {
         this.title = title;
         this.description = description;
-        this.ownerID = ownerID;
+        this.ownerId = ownerId;
     }
 
     public CategoryEntity(CategoryDto dto){

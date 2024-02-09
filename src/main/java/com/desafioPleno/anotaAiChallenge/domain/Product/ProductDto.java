@@ -26,7 +26,7 @@ public class ProductDto {
     private CategoryDto category;
     
     @NotBlank
-    private String ownerID;
+    private String ownerId;
 
     public ProductDto(ProductEntity entity) {
         BeanUtils.copyProperties(entity, this);
