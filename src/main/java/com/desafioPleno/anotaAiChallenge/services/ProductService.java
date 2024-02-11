@@ -9,6 +9,7 @@ import com.desafioPleno.anotaAiChallenge.ropositories.ProductRepository;
 
 import com.desafioPleno.anotaAiChallenge.domain.Product.ProductDto;
 import com.desafioPleno.anotaAiChallenge.domain.Product.ProductEntity;
+import com.desafioPleno.anotaAiChallenge.domain.Product.ProductExceptions.PriceLessThanZeroException;
 import com.desafioPleno.anotaAiChallenge.domain.Product.ProductExceptions.ProductNotFoundException;
 
 @Service
@@ -41,6 +42,9 @@ public class ProductService {
         if(!productDto.getCategory().isEmpty()) {
             this.categoryService.getById(productDto.getCategory());
         }
+        if(productDto.getPrice() < 0) {
+            throw new PriceLessThanZeroException("The product can't have a negative value as a price!");
+        }
 
         ProductEntity productEntity = new ProductEntity(productDto);
         return new ProductDto(productRepository.save(productEntity));
@@ -51,6 +55,10 @@ public class ProductService {
 
         if(!productDto.getCategory().isEmpty()) {
             this.categoryService.getById(productDto.getCategory());
+        }
+
+        if(productDto.getPrice() < 0) {
+            throw new PriceLessThanZeroException("The product can't have a negative value as a price!");
         }
 
         ProductEntity productEntity = new ProductEntity(productDto);
