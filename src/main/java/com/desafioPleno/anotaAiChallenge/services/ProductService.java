@@ -39,22 +39,31 @@ public class ProductService {
     }
 
     public ProductDto create(ProductDto productDto) {
-        if(!productDto.getCategory().isEmpty()) {
-            this.categoryService.getById(productDto.getCategory());
+
+        if(productDto.getCategory() != null) {
+            if(!productDto.getCategory().isEmpty()) {
+                this.categoryService.getById(productDto.getCategory());
+            }
         }
+
         if(productDto.getPrice() < 0) {
             throw new PriceLessThanZeroException("The product can't have a negative value as a price!");
         }
+
+        productDto.setId(null);
 
         ProductEntity productEntity = new ProductEntity(productDto);
         return new ProductDto(productRepository.save(productEntity));
     }
 
     public ProductDto update(ProductDto productDto) {
+
         productRepository.findById(productDto.getId()).orElseThrow(ProductNotFoundException::new);
 
-        if(!productDto.getCategory().isEmpty()) {
-            this.categoryService.getById(productDto.getCategory());
+        if(productDto.getCategory() != null) {
+            if(!productDto.getCategory().isEmpty()) {
+                this.categoryService.getById(productDto.getCategory());
+            }
         }
 
         if(productDto.getPrice() < 0) {

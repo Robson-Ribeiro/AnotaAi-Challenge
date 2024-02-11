@@ -34,6 +34,7 @@ public class CategoryService {
     }
 
     public CategoryDto create(CategoryDto categoryDto) {
+        categoryDto.setId(null);
         CategoryEntity categoryEntity = new CategoryEntity(categoryDto);
         return new CategoryDto(categoryRepository.save(categoryEntity));
     }

@@ -14,11 +14,11 @@ public class CategoryDto {
     
     private String id;
 
-    @NotBlank
+    @NotBlank(message = "Category title must be provided.")
     private String title;
-    @NotBlank
+    @NotBlank(message = "Category description must be provided.")
     private String description;
-    @NotBlank
+    @NotBlank(message = "Category ownerId must be provided.")
     private String ownerId;
 
     public CategoryDto(CategoryEntity entity) {

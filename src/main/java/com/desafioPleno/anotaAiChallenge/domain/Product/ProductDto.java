@@ -2,8 +2,6 @@ package com.desafioPleno.anotaAiChallenge.domain.Product;
 
 import org.springframework.beans.BeanUtils;
 
-import com.desafioPleno.anotaAiChallenge.domain.Category.CategoryDto;
-
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import lombok.Getter;
@@ -17,15 +15,15 @@ public class ProductDto {
     
     private String id;
 
-    @NotBlank
+    @NotBlank(message = "Product title must be provided.")
     private String title;
-    @NotBlank
+    @NotBlank(message = "Product description must be provided.")
     private String description;
-    @NotNull
+    @NotNull(message = "Product price must be provided.")
     private float price;
-    @NotBlank
+
     private String category;
-    @NotBlank
+    @NotBlank(message = "Product ownerId must be provided.")
     private String ownerId;
 
     public ProductDto(ProductEntity entity) {
