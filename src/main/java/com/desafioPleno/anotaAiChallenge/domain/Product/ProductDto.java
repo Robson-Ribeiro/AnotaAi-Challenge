@@ -5,6 +5,7 @@ import org.springframework.beans.BeanUtils;
 import com.desafioPleno.anotaAiChallenge.domain.Category.CategoryDto;
 
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -20,11 +21,10 @@ public class ProductDto {
     private String title;
     @NotBlank
     private String description;
-    @NotBlank 
+    @NotNull
     private float price;
-    
-    private CategoryDto category;
-    
+    @NotBlank
+    private String category;
     @NotBlank
     private String ownerId;
 

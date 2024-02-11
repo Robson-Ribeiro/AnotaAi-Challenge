@@ -16,8 +16,11 @@ public class ProductService {
     
     private final ProductRepository productRepository;
 
-    public ProductService(ProductRepository productRepository) {
+    private final CategoryService categoryService;
+
+    public ProductService(ProductRepository productRepository, CategoryService categoryService) {
         this.productRepository = productRepository;
+        this.categoryService = categoryService;
     }
 
     public List<ProductDto> getAll() {
@@ -35,12 +38,20 @@ public class ProductService {
     }
 
     public ProductDto create(ProductDto productDto) {
+        if(!productDto.getCategory().isEmpty()) {
+            this.categoryService.getById(productDto.getCategory());
+        }
+
         ProductEntity productEntity = new ProductEntity(productDto);
         return new ProductDto(productRepository.save(productEntity));
     }
 
     public ProductDto update(ProductDto productDto) {
         productRepository.findById(productDto.getId()).orElseThrow(ProductNotFoundException::new);
+
+        if(!productDto.getCategory().isEmpty()) {
+            this.categoryService.getById(productDto.getCategory());
+        }
 
         ProductEntity productEntity = new ProductEntity(productDto);
         return new ProductDto(productRepository.save(productEntity));
