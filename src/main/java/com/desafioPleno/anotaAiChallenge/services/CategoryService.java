@@ -8,14 +8,18 @@ import com.desafioPleno.anotaAiChallenge.domain.Category.CategoryDto;
 import com.desafioPleno.anotaAiChallenge.domain.Category.CategoryEntity;
 import com.desafioPleno.anotaAiChallenge.domain.Category.CategoryExceptions.CategoryNotFoundException;
 import com.desafioPleno.anotaAiChallenge.ropositories.CategoryRepository;
+import com.desafioPleno.anotaAiChallenge.services.AWS.SnsService;
 
 @Service
 public class CategoryService {
     
     private final CategoryRepository categoryRepository;
 
-    public CategoryService(CategoryRepository categoryRepository) {
+    private final SnsService snsService;
+
+    public CategoryService(CategoryRepository categoryRepository, SnsService snsService) {
         this.categoryRepository = categoryRepository;
+        this.snsService = snsService;
     }
 
     public List<CategoryDto> getAll() {
@@ -30,18 +34,21 @@ public class CategoryService {
     public CategoryDto getById(String id) {
         CategoryEntity categoryEntity = categoryRepository.findById(id).orElseThrow(CategoryNotFoundException::new);
         return new CategoryDto(categoryEntity);
-        
     }
 
     public CategoryDto create(CategoryDto categoryDto) {
         categoryDto.setId(null);
         CategoryEntity categoryEntity = new CategoryEntity(categoryDto);
-        return new CategoryDto(categoryRepository.save(categoryEntity));
+        categoryEntity = categoryRepository.save(categoryEntity);
+        snsService.publish(categoryEntity.getOwnerId());
+        return new CategoryDto(categoryEntity);
     }
 
     public CategoryDto update(CategoryDto categoryDto) {
         CategoryEntity categoryEntity = new CategoryEntity(categoryDto);
-        return new CategoryDto(categoryRepository.save(categoryEntity));
+        categoryEntity = categoryRepository.save(categoryEntity);
+        snsService.publish(categoryEntity.getOwnerId());
+        return new CategoryDto(categoryEntity);
     }
 
     public void delete(String id) {

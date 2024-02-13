@@ -6,7 +6,7 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import com.desafioPleno.anotaAiChallenge.ropositories.ProductRepository;
-
+import com.desafioPleno.anotaAiChallenge.services.AWS.SnsService;
 import com.desafioPleno.anotaAiChallenge.domain.Product.ProductDto;
 import com.desafioPleno.anotaAiChallenge.domain.Product.ProductEntity;
 import com.desafioPleno.anotaAiChallenge.domain.Product.ProductExceptions.PriceLessThanZeroException;
@@ -19,9 +19,12 @@ public class ProductService {
 
     private final CategoryService categoryService;
 
-    public ProductService(ProductRepository productRepository, CategoryService categoryService) {
+    private final SnsService snsService;
+
+    public ProductService(ProductRepository productRepository, CategoryService categoryService, SnsService snsService) {
         this.productRepository = productRepository;
         this.categoryService = categoryService;
+        this.snsService = snsService;
     }
 
     public List<ProductDto> getAll() {
@@ -53,7 +56,9 @@ public class ProductService {
         productDto.setId(null);
 
         ProductEntity productEntity = new ProductEntity(productDto);
-        return new ProductDto(productRepository.save(productEntity));
+        productEntity = productRepository.save(productEntity);
+        snsService.publish(productEntity.getOwnerId());
+        return new ProductDto(productEntity);
     }
 
     public ProductDto update(ProductDto productDto) {
@@ -71,7 +76,9 @@ public class ProductService {
         }
 
         ProductEntity productEntity = new ProductEntity(productDto);
-        return new ProductDto(productRepository.save(productEntity));
+        productEntity = productRepository.save(productEntity);
+        snsService.publish(productEntity.getOwnerId());
+        return new ProductDto(productEntity);
     }
 
     public void delete(String id) {
