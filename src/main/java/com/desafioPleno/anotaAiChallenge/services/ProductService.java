@@ -84,6 +84,7 @@ public class ProductService {
     public void delete(String id) {
         ProductEntity productEntity = productRepository.findById(id).orElseThrow(ProductNotFoundException::new);
         productRepository.delete(productEntity);
+        snsService.publish(productEntity.getOwnerId());
     }
 }
 

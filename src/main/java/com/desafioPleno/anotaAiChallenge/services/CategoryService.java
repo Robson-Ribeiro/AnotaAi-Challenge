@@ -54,5 +54,6 @@ public class CategoryService {
     public void delete(String id) {
         CategoryEntity categoryEntity = categoryRepository.findById(id).orElseThrow(CategoryNotFoundException::new);
         categoryRepository.delete(categoryEntity);
+        snsService.publish(categoryEntity.getOwnerId());
     }
 }
