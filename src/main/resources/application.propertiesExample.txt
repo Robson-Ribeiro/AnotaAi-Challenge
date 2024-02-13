@@ -1,0 +1,4 @@
+aws.accessKeyId=#########
+aws.secretKey=###########
+aws.region=Your AWS Region
+aws.sns.topic.catalog.arn=Your catalog topic arn
