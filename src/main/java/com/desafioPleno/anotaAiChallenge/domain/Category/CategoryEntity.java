@@ -1,5 +1,6 @@
 package com.desafioPleno.anotaAiChallenge.domain.Category;
 
+import org.json.JSONObject;
 import org.springframework.beans.BeanUtils;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
@@ -29,5 +30,15 @@ public class CategoryEntity {
 
     public CategoryEntity(CategoryDto dto){
         BeanUtils.copyProperties(dto, this);
+    }
+
+    public String toString(String action) {
+        JSONObject categoryJson = new JSONObject();
+        categoryJson.put("id", this.id);
+        categoryJson.put("title", this.title);
+        categoryJson.put("description", this.description);
+        categoryJson.put("ownerId", this.ownerId);
+        
+        return categoryJson.toString();
     }
 }

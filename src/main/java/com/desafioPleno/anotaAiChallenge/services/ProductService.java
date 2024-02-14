@@ -57,7 +57,7 @@ public class ProductService {
 
         ProductEntity productEntity = new ProductEntity(productDto);
         productEntity = productRepository.save(productEntity);
-        snsService.publish(productEntity.getOwnerId());
+        snsService.publish(productEntity.toString("create"));
         return new ProductDto(productEntity);
     }
 
@@ -77,14 +77,14 @@ public class ProductService {
 
         ProductEntity productEntity = new ProductEntity(productDto);
         productEntity = productRepository.save(productEntity);
-        snsService.publish(productEntity.getOwnerId());
+        snsService.publish(productEntity.toString("update"));
         return new ProductDto(productEntity);
     }
 
     public void delete(String id) {
         ProductEntity productEntity = productRepository.findById(id).orElseThrow(ProductNotFoundException::new);
         productRepository.delete(productEntity);
-        snsService.publish(productEntity.getOwnerId());
+        System.out.println(productEntity.toString("delete"));
+        snsService.publish(productEntity.toString("delete"));
     }
 }
-

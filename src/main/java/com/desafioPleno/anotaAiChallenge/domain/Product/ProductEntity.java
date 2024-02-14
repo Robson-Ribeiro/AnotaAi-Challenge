@@ -1,5 +1,6 @@
 package com.desafioPleno.anotaAiChallenge.domain.Product;
 
+import org.json.JSONObject;
 import org.springframework.beans.BeanUtils;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
@@ -33,5 +34,17 @@ public class ProductEntity {
 
     public ProductEntity(ProductDto dto) {
         BeanUtils.copyProperties(dto, this);
+    }
+
+    public String toString(String action) {
+        JSONObject productJson = new JSONObject();
+        productJson.put("id", this.id);
+        productJson.put("title", this.title);
+        productJson.put("description", this.description);
+        productJson.put("price", this.price);
+        productJson.put("category", this.category);
+        productJson.put("ownerId", this.ownerId);
+        
+        return productJson.toString();
     }
 }

@@ -40,20 +40,20 @@ public class CategoryService {
         categoryDto.setId(null);
         CategoryEntity categoryEntity = new CategoryEntity(categoryDto);
         categoryEntity = categoryRepository.save(categoryEntity);
-        snsService.publish(categoryEntity.getOwnerId());
+        snsService.publish(categoryEntity.toString("create"));
         return new CategoryDto(categoryEntity);
     }
 
     public CategoryDto update(CategoryDto categoryDto) {
         CategoryEntity categoryEntity = new CategoryEntity(categoryDto);
         categoryEntity = categoryRepository.save(categoryEntity);
-        snsService.publish(categoryEntity.getOwnerId());
+        snsService.publish(categoryEntity.toString("update"));
         return new CategoryDto(categoryEntity);
     }
 
     public void delete(String id) {
         CategoryEntity categoryEntity = categoryRepository.findById(id).orElseThrow(CategoryNotFoundException::new);
         categoryRepository.delete(categoryEntity);
-        snsService.publish(categoryEntity.getOwnerId());
+        snsService.publish(categoryEntity.toString("delete"));
     }
 }
