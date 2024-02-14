@@ -84,7 +84,6 @@ public class ProductService {
     public void delete(String id) {
         ProductEntity productEntity = productRepository.findById(id).orElseThrow(ProductNotFoundException::new);
         productRepository.delete(productEntity);
-        System.out.println(productEntity.toString("delete"));
         snsService.publish(productEntity.toString("delete"));
     }
 }
