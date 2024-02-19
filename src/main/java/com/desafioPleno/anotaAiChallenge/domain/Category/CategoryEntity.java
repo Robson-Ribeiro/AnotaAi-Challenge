@@ -38,7 +38,8 @@ public class CategoryEntity {
         categoryJson.put("title", this.title);
         categoryJson.put("description", this.description);
         categoryJson.put("ownerId", this.ownerId);
-        
+        categoryJson.put("type", "category");
+        categoryJson.put("action", action);
         return categoryJson.toString();
     }
 }

@@ -44,7 +44,8 @@ public class ProductEntity {
         productJson.put("price", this.price);
         productJson.put("category", this.category);
         productJson.put("ownerId", this.ownerId);
-        
+        productJson.put("type", "product");
+        productJson.put("action", action);
         return productJson.toString();
     }
 }
