@@ -17,7 +17,7 @@ export const handler = async (event) => {
         if(body.type == 'product' && body.action != "delete") {
             updateOrAddItem(catalogData.products, objectFilter(body, "action"))
         } else if(body.type == 'category' && body.action != "delete") {
-            updateOrAddItem(catalogData.products, objectFilter(body, "action"))
+            updateOrAddItem(catalogData.categories, objectFilter(body, "action"))
         } else if(body.type == 'product' && body.action == "delete") {
             deleteS3Item(catalogData.products, body)
         } else if(body.type == 'category' && body.action == "delete") {
@@ -29,7 +29,7 @@ export const handler = async (event) => {
       } catch (error) {
         if(error.message == "Error getting object from bucket") {
           const newCatalog = { products: [], categories: [] }
-          if(body.type == "produto") {
+          if(body.type == "product") {
             newCatalog.products.push(objectFilter(body, "action"));
           } else {
             newCatalog.categories.push(objectFilter(body, "action"));
