@@ -1,13 +1,11 @@
-import {S3Client, GetObjectCommand, PutObjectCommand } from "@aws-sdk/client-s3";
+import {S3Client, GetObjectCommand, PutObjectCommand} from "@aws-sdk/client-s3";
 
 const client = new S3Client({region: "us-east-2"});
 
 export const handler = async (event) => {
   try {
     for(const record of event.Records) {
-      console.log("Starting message processing", record)
-      
-      const body = JSON.parse(record.body)
+      const body = JSON.parse(JSON.parse(record.body).Message)
       const ownerId = body.ownerId;
       
       try {
@@ -17,15 +15,9 @@ export const handler = async (event) => {
         const catalogData = JSON.parse(catalog)
       
         if(body.type == 'product' && body.action != "delete") {
-            let keys = Object.keys(body).filter(key => key !== 'action')
-            let filteredBody = {};
-            keys.forEach(key => filteredBody[key] = body[key])
-            updateOrAddItem(catalogData.products, filteredBody)
+            updateOrAddItem(catalogData.products, objectFilter(body, "action"))
         } else if(body.type == 'category' && body.action != "delete") {
-            let keys = Object.keys(body).filter(key => key !== 'action')
-            let filteredBody = {};
-            keys.forEach(key => filteredBody[key] = body[key])
-            updateOrAddItem(catalogData.products, filteredBody)
+            updateOrAddItem(catalogData.products, objectFilter(body, "action"))
         } else if(body.type == 'product' && body.action == "delete") {
             deleteS3Item(catalogData.products, body)
         } else if(body.type == 'category' && body.action == "delete") {
@@ -38,9 +30,9 @@ export const handler = async (event) => {
         if(error.message == "Error getting object from bucket") {
           const newCatalog = { products: [], categories: [] }
           if(body.type == "produto") {
-            newCatalog.products.push(body);
+            newCatalog.products.push(objectFilter(body, "action"));
           } else {
-            newCatalog.categories.push(body);
+            newCatalog.categories.push(objectFilter(body, "action"));
           }
           
           await putS3Object(bucketName, filename, JSON.stringify(newCatalog))
@@ -68,7 +60,7 @@ async function getS3Object(bucket, key) {
     try {
       const response = await client.send(getCommand);
   
-      // Lendo o stream e convertendo para string
+      //Lendo o stream e convertendo para string
       return streamToString(response.Body);
 
     } catch (error) {
@@ -123,4 +115,11 @@ function deleteS3Item(catalog, newItem) {
   } catch (error) {
     throw new Error("Error deleting an item!");
   }
+}
+
+function objectFilter(object, keyName) {
+  let keys = Object.keys(object).filter(key => key !== keyName)
+  let filteredBody = {};
+  keys.forEach(key => filteredBody[key] = object[key])
+  return filteredBody;
 }
