@@ -2,12 +2,17 @@ package com.desafioPleno.anotaAiChallenge.services;
 import java.util.List;
 
 import org.springframework.data.domain.Sort;
+import org.springframework.data.mongodb.core.MongoTemplate;
+import org.springframework.data.mongodb.core.query.Criteria;
+import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.stereotype.Service;
 
 import com.desafioPleno.anotaAiChallenge.domain.Category.CategoryDto;
 import com.desafioPleno.anotaAiChallenge.domain.Category.CategoryEntity;
 import com.desafioPleno.anotaAiChallenge.domain.Category.CategoryExceptions.CategoryNotFoundException;
+import com.desafioPleno.anotaAiChallenge.domain.Product.ProductEntity;
 import com.desafioPleno.anotaAiChallenge.ropositories.CategoryRepository;
+import com.desafioPleno.anotaAiChallenge.ropositories.ProductRepository;
 import com.desafioPleno.anotaAiChallenge.services.AWS.SnsService;
 
 @Service
@@ -17,9 +22,15 @@ public class CategoryService {
 
     private final SnsService snsService;
 
-    public CategoryService(CategoryRepository categoryRepository, SnsService snsService) {
+    private final MongoTemplate mongoTemplate;
+
+    private final ProductRepository productRepository;
+
+    public CategoryService(CategoryRepository categoryRepository, SnsService snsService, MongoTemplate mongoTemplate, ProductRepository productRepository) {
         this.categoryRepository = categoryRepository;
         this.snsService = snsService;
+        this.mongoTemplate = mongoTemplate;
+        this.productRepository = productRepository;
     }
 
     public List<CategoryDto> getAll() {
@@ -54,6 +65,16 @@ public class CategoryService {
     public void delete(String id) {
         CategoryEntity categoryEntity = categoryRepository.findById(id).orElseThrow(CategoryNotFoundException::new);
         categoryRepository.delete(categoryEntity);
+        Query query = new Query();
+        query.addCriteria(Criteria.where("ownerId").is(categoryEntity.getOwnerId()));
+        List<ProductEntity> products = mongoTemplate.find(query, ProductEntity.class);
+        products.forEach((product) -> {
+            if(product.getCategory().intern() == categoryEntity.getId().intern()) {
+                product.setCategory("");
+                productRepository.save(product);
+                snsService.publish(product.toString("update"));
+            }
+        });
         snsService.publish(categoryEntity.toString("delete"));
     }
 }

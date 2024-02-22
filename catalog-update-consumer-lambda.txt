@@ -43,7 +43,7 @@ export const handler = async (event) => {
       }
   }
     
-    return { status: 'sucesso' }
+    return { status: 'success' }
   } catch (error) {
     console.log("Error", error)
     throw new Error("Error processing SQS message!");
