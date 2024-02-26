@@ -40,13 +40,13 @@ public class ProductController {
     }
 
     @PostMapping
-    public ResponseEntity<ProductDto> create(@RequestBody @Valid ProductDto ProductDto) {
-        return ResponseEntity.ok().body(this.productService.create(ProductDto));
+    public ResponseEntity<ProductDto> create(@RequestBody @Valid ProductDto productDto) {
+        return ResponseEntity.ok().body(this.productService.create(productDto));
     }
     
     @PutMapping
-    public ResponseEntity<ProductDto> update(@RequestBody @Valid ProductDto ProductDto) {
-        return ResponseEntity.ok().body(this.productService.update(ProductDto));
+    public ResponseEntity<ProductDto> update(@RequestBody @Valid ProductDto productDto) {
+        return ResponseEntity.ok().body(this.productService.update(productDto));
     }
 
     @DeleteMapping("/{id}")
