@@ -7,6 +7,7 @@ import org.springframework.stereotype.Service;
 
 import com.desafioPleno.anotaAiChallenge.domain.User.UserDto;
 import com.desafioPleno.anotaAiChallenge.domain.User.UserEntity;
+import com.desafioPleno.anotaAiChallenge.domain.User.UserExceptions.UserNotFoundException;
 import com.desafioPleno.anotaAiChallenge.ropositories.UserRepository;
 
 @Service
@@ -29,5 +30,9 @@ public class UserService {
 
         List<UserEntity> allUsers = userRepository.findAll(sort);
         return allUsers.stream().map(UserDto::new).toList();
+    }
+
+    public UserDto getUser(String id) {
+        return new UserDto(userRepository.findById(id).orElseThrow(UserNotFoundException::new));
     }
 }

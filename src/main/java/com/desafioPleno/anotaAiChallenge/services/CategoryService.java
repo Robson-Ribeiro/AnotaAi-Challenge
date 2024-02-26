@@ -26,11 +26,14 @@ public class CategoryService {
 
     private final ProductRepository productRepository;
 
-    public CategoryService(CategoryRepository categoryRepository, SnsService snsService, MongoTemplate mongoTemplate, ProductRepository productRepository) {
+    private final UserService userService;
+
+    public CategoryService(CategoryRepository categoryRepository, SnsService snsService, MongoTemplate mongoTemplate, ProductRepository productRepository, UserService userService) {
         this.categoryRepository = categoryRepository;
         this.snsService = snsService;
         this.mongoTemplate = mongoTemplate;
         this.productRepository = productRepository;
+        this.userService = userService;
     }
 
     public List<CategoryDto> getAll() {
@@ -49,6 +52,7 @@ public class CategoryService {
 
     public CategoryDto create(CategoryDto categoryDto) {
         categoryDto.setId(null);
+        userService.getUser(categoryDto.getOwnerId());
         CategoryEntity categoryEntity = new CategoryEntity(categoryDto);
         categoryEntity = categoryRepository.save(categoryEntity);
         snsService.publish(categoryEntity.toString("create"));
@@ -56,6 +60,7 @@ public class CategoryService {
     }
 
     public CategoryDto update(CategoryDto categoryDto) {
+        userService.getUser(categoryDto.getOwnerId());
         CategoryEntity categoryEntity = new CategoryEntity(categoryDto);
         categoryEntity = categoryRepository.save(categoryEntity);
         snsService.publish(categoryEntity.toString("update"));

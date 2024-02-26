@@ -21,10 +21,13 @@ public class ProductService {
 
     private final SnsService snsService;
 
-    public ProductService(ProductRepository productRepository, CategoryService categoryService, SnsService snsService) {
+    private final UserService userService;
+
+    public ProductService(ProductRepository productRepository, CategoryService categoryService, SnsService snsService, UserService userService) {
         this.productRepository = productRepository;
         this.categoryService = categoryService;
         this.snsService = snsService;
+        this.userService = userService;
     }
 
     public List<ProductDto> getAll() {
@@ -53,6 +56,8 @@ public class ProductService {
             throw new PriceLessThanZeroException("The product can't have a negative value as a price!");
         }
 
+        userService.getUser(productDto.getOwnerId());
+
         productDto.setId(null);
 
         ProductEntity productEntity = new ProductEntity(productDto);
@@ -74,6 +79,8 @@ public class ProductService {
         if(productDto.getPrice() < 0) {
             throw new PriceLessThanZeroException("The product can't have a negative value as a price!");
         }
+
+        userService.getUser(productDto.getOwnerId());
 
         ProductEntity productEntity = new ProductEntity(productDto);
         productEntity = productRepository.save(productEntity);
