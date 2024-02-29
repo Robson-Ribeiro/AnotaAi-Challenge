@@ -2,6 +2,7 @@ package com.desafioPleno.anotaAiChallenge.domain.User;
 
 import org.springframework.beans.BeanUtils;
 import org.springframework.data.annotation.Id;
+import org.springframework.data.mongodb.core.index.Indexed;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 import lombok.Getter;
@@ -16,7 +17,8 @@ public class UserEntity {
     @Id
     private String id;
 
-    private String userName;
+    @Indexed(unique = true)
+    private String username;
     private String password;
 
     public UserEntity(UserDto dto) {
