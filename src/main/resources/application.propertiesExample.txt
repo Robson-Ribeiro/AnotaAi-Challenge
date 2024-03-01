@@ -2,3 +2,8 @@ aws.accessKeyId=#########
 aws.secretKey=###########
 aws.region=Your AWS Region
 aws.sns.topic.catalog.arn=Your catalog topic arn
+
+spring.data.mongodb.auto-index-creation=true
+
+jwt.private.key=classpath:app.key
+jwt.public.key=classpath:app.pub
