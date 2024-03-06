@@ -13,7 +13,7 @@ import lombok.Setter;
 public class UserDto {
     private String id;
     @NotBlank(message = "User name must be provided.")
-    private String userName;
+    private String username;
     @NotBlank(message = "User password must be provided.")
     private String password;
 

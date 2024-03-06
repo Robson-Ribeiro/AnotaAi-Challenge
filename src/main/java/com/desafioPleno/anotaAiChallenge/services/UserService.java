@@ -4,6 +4,7 @@ import java.util.List;
 
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
+import org.springframework.security.crypto.password.PasswordEncoder;
 
 import com.desafioPleno.anotaAiChallenge.domain.User.UserDto;
 import com.desafioPleno.anotaAiChallenge.domain.User.UserEntity;
@@ -14,13 +15,19 @@ import com.desafioPleno.anotaAiChallenge.ropositories.UserRepository;
 public class UserService {
     private final UserRepository userRepository;
 
-    public UserService(UserRepository userRepository) {
+    private final PasswordEncoder passwordEncoder;
+
+    public UserService(UserRepository userRepository, PasswordEncoder passwordEncoder) {
         this.userRepository = userRepository;
+        this.passwordEncoder = passwordEncoder;
     }
 
     public UserDto createUser(UserDto userDto) {
+        userDto.setPassword(passwordEncoder.encode(userDto.getPassword()));
         UserEntity userEntity = new UserEntity(userDto);
-        return new UserDto(userRepository.save(userEntity));
+        userRepository.save(userEntity);
+        userEntity.setPassword("secret");
+        return new UserDto(userEntity);
     }
 
     public List<UserDto> getAllUsers() {
