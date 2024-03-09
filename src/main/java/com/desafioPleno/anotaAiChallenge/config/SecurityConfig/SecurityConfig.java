@@ -3,9 +3,11 @@ package com.desafioPleno.anotaAiChallenge.config.SecurityConfig;
 import java.security.interfaces.RSAPrivateKey;
 import java.security.interfaces.RSAPublicKey;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
@@ -18,7 +20,10 @@ import org.springframework.security.oauth2.jwt.JwtDecoder;
 import org.springframework.security.oauth2.jwt.JwtEncoder;
 import org.springframework.security.oauth2.jwt.NimbusJwtDecoder;
 import org.springframework.security.oauth2.jwt.NimbusJwtEncoder;
+import org.springframework.security.oauth2.server.resource.web.BearerTokenResolver;
+import org.springframework.security.oauth2.server.resource.web.DefaultBearerTokenResolver;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
 import com.nimbusds.jose.jwk.JWK;
 import com.nimbusds.jose.jwk.JWKSet;
@@ -36,8 +41,12 @@ public class SecurityConfig {
   @Value("${jwt.private.key}")
   private RSAPrivateKey priv;
 
+  @Autowired
+  SecurityFilterConfig securityFilterConfig;
+
   @Bean
   SecurityFilterChain filterChain(HttpSecurity httpSecurity) throws Exception {
+
     return httpSecurity
       .csrf(csrf -> csrf.disable())
       .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
@@ -47,6 +56,7 @@ public class SecurityConfig {
           .requestMatchers(HttpMethod.POST, "/auth").permitAll()
           .anyRequest().authenticated()
       )
+      .addFilterBefore(securityFilterConfig, UsernamePasswordAuthenticationFilter.class)
       .build();
   }
 
