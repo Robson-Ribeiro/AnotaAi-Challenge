@@ -20,6 +20,7 @@ public class UserEntity {
     @Indexed(unique = true)
     private String username;
     private String password;
+    private UserAuthority authority;
 
     public UserEntity(UserDto dto) {
         BeanUtils.copyProperties(dto, this);
