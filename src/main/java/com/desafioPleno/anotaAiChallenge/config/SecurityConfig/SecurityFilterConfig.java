@@ -16,6 +16,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import com.desafioPleno.anotaAiChallenge.domain.User.UserEntity;
+import com.desafioPleno.anotaAiChallenge.security.UserAuthenticated;
 
 import java.io.IOException;
 import java.util.List;
@@ -35,7 +36,8 @@ public class SecurityFilterConfig extends OncePerRequestFilter {
             Query query = new Query();
             query.addCriteria(Criteria.where("username").is(login.getSubject()));
             List<UserEntity> user = mongoTemplate.find(query, UserEntity.class);
-            var authentication = new UsernamePasswordAuthenticationToken(user.get(0).getUsername(), null, null);
+            var userAuthenticated = new UserAuthenticated(user.get(0));
+            var authentication = new UsernamePasswordAuthenticationToken(user.get(0).getUsername(), null, userAuthenticated.getAuthorities());
             SecurityContextHolder.getContext().setAuthentication(authentication);
         }
         filterChain.doFilter(request, response);
