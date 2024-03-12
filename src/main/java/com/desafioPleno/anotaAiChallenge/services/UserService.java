@@ -32,10 +32,11 @@ public class UserService {
 
     public List<UserDto> getAllUsers() {
         Sort sort = Sort.by("id").ascending().and(
-                Sort.by("userName").ascending()
-            );
+            Sort.by("userName").ascending()
+        );
 
         List<UserEntity> allUsers = userRepository.findAll(sort);
+        allUsers.forEach(user -> user.setPassword("secret"));
         return allUsers.stream().map(UserDto::new).toList();
     }
 
