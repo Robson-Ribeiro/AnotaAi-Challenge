@@ -5,8 +5,6 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
 
-import com.desafioPleno.anotaAiChallenge.domain.User.UserDto;
-
 @Service
 public class AuthenticationService {
   private JwtService jwtService;
@@ -18,7 +16,7 @@ public class AuthenticationService {
     this.authenticationManager = authenticationManager;
   }
 
-  public String authenticate(UserDto data) {
+  public String authenticate(LoginDto data) {
     var usernamePassword = new UsernamePasswordAuthenticationToken(data.getUsername(), data.getPassword());
     Authentication auth = this.authenticationManager.authenticate(usernamePassword);
     return jwtService.generateToken(auth);
