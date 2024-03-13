@@ -10,6 +10,7 @@ import com.desafioPleno.anotaAiChallenge.domain.User.UserDto;
 import com.desafioPleno.anotaAiChallenge.domain.User.UserEntity;
 import com.desafioPleno.anotaAiChallenge.domain.User.UserExceptions.UserNotFoundException;
 import com.desafioPleno.anotaAiChallenge.ropositories.UserRepository;
+import org.springframework.security.core.context.SecurityContextHolder;
 
 @Service
 public class UserService {

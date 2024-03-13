@@ -3,6 +3,7 @@ package com.desafioPleno.anotaAiChallenge.services;
 import java.util.List;
 
 import org.springframework.data.domain.Sort;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import com.desafioPleno.anotaAiChallenge.ropositories.ProductRepository;
@@ -11,6 +12,7 @@ import com.desafioPleno.anotaAiChallenge.domain.Product.ProductDto;
 import com.desafioPleno.anotaAiChallenge.domain.Product.ProductEntity;
 import com.desafioPleno.anotaAiChallenge.domain.Product.ProductExceptions.PriceLessThanZeroException;
 import com.desafioPleno.anotaAiChallenge.domain.Product.ProductExceptions.ProductNotFoundException;
+import com.desafioPleno.anotaAiChallenge.domain.Product.ProductExceptions.UnmatchingOwnerIdException;
 
 @Service
 public class ProductService {
@@ -31,9 +33,11 @@ public class ProductService {
     }
 
     public List<ProductDto> getAll() {
+        //var tokenId = SecurityContextHolder.getContext().getAuthentication().getCredentials();
+        //System.out.println(tokenId.toString());
         Sort sort = Sort.by("id").ascending().and(
-                Sort.by("ownerId").ascending()
-            );
+            Sort.by("ownerId").ascending()
+        );
 
         List<ProductEntity> allProducts = productRepository.findAll(sort);
         return allProducts.stream().map(ProductDto::new).toList();
@@ -45,7 +49,6 @@ public class ProductService {
     }
 
     public ProductDto create(ProductDto productDto) {
-
         if(productDto.getCategory() != null) {
             if(!productDto.getCategory().isEmpty()) {
                 this.categoryService.getById(productDto.getCategory());
@@ -56,6 +59,8 @@ public class ProductService {
             throw new PriceLessThanZeroException("The product can't have a negative value as a price!");
         }
 
+        var tokenId = SecurityContextHolder.getContext().getAuthentication().getCredentials();
+        productDto.setOwnerId(tokenId.toString());
         userService.getUser(productDto.getOwnerId());
 
         productDto.setId(null);
@@ -67,7 +72,6 @@ public class ProductService {
     }
 
     public ProductDto update(ProductDto productDto) {
-
         productRepository.findById(productDto.getId()).orElseThrow(ProductNotFoundException::new);
 
         if(productDto.getCategory() != null) {
@@ -82,15 +86,25 @@ public class ProductService {
 
         userService.getUser(productDto.getOwnerId());
 
-        ProductEntity productEntity = new ProductEntity(productDto);
-        productEntity = productRepository.save(productEntity);
-        snsService.publish(productEntity.toString("update"));
-        return new ProductDto(productEntity);
+        var tokenId = SecurityContextHolder.getContext().getAuthentication().getCredentials();
+        if(tokenId.toString().intern() == productRepository.findById(productDto.getId()).get().getOwnerId().intern()) {
+            productDto.setOwnerId(tokenId.toString());
+            ProductEntity productEntity = new ProductEntity(productDto);
+            productEntity = productRepository.save(productEntity);
+            snsService.publish(productEntity.toString("update"));
+            return new ProductDto(productEntity);
+        }
+        throw new UnmatchingOwnerIdException("You cannot update a product that belongs to another user!");
     }
 
     public void delete(String id) {
+        var tokenId = SecurityContextHolder.getContext().getAuthentication().getCredentials();
         ProductEntity productEntity = productRepository.findById(id).orElseThrow(ProductNotFoundException::new);
-        productRepository.delete(productEntity);
-        snsService.publish(productEntity.toString("delete"));
+        if(tokenId.toString().intern() == productEntity.getOwnerId().intern()) {
+            productRepository.delete(productEntity);
+            snsService.publish(productEntity.toString("delete"));
+        } else {
+            throw new UnmatchingOwnerIdException("You cannot delete a product that belongs to another user!");
+        }
     }
 }

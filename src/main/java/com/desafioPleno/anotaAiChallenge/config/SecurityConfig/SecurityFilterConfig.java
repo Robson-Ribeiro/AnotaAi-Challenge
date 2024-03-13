@@ -37,7 +37,7 @@ public class SecurityFilterConfig extends OncePerRequestFilter {
             query.addCriteria(Criteria.where("username").is(login.getSubject()));
             List<UserEntity> user = mongoTemplate.find(query, UserEntity.class);
             var userAuthenticated = new UserAuthenticated(user.get(0));
-            var authentication = new UsernamePasswordAuthenticationToken(user.get(0).getUsername(), null, userAuthenticated.getAuthorities());
+            var authentication = new UsernamePasswordAuthenticationToken(user.get(0).getUsername(), user.get(0).getId(), userAuthenticated.getAuthorities());
             SecurityContextHolder.getContext().setAuthentication(authentication);
         }
         filterChain.doFilter(request, response);
