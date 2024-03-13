@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.desafioPleno.anotaAiChallenge.domain.Category.CategoryExceptions.CategoryNotFoundException;
 import com.desafioPleno.anotaAiChallenge.domain.Product.ProductExceptions.PriceLessThanZeroException;
 import com.desafioPleno.anotaAiChallenge.domain.Product.ProductExceptions.ProductNotFoundException;
+import com.desafioPleno.anotaAiChallenge.domain.Product.ProductExceptions.UnmatchingOwnerIdException;
 import com.desafioPleno.anotaAiChallenge.domain.User.UserExceptions.UserNotFoundException;
 
 @RestController
@@ -52,5 +53,11 @@ public class ControllerExceptionHandler {
     public ResponseEntity<String> handleUserNotFoundException(UserNotFoundException e) {
 
         return ResponseEntity.badRequest().body("We couldn't find the user that you informed!");
+    }
+
+    @ExceptionHandler(value = UnmatchingOwnerIdException.class)
+    public ResponseEntity<String> handleUnmatchingOwnerIdException(UnmatchingOwnerIdException e) {
+
+        return ResponseEntity.badRequest().body(e.getMessage());
     }
 }
