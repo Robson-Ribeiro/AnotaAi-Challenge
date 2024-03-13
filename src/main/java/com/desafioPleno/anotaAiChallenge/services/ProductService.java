@@ -33,8 +33,6 @@ public class ProductService {
     }
 
     public List<ProductDto> getAll() {
-        //var tokenId = SecurityContextHolder.getContext().getAuthentication().getCredentials();
-        //System.out.println(tokenId.toString());
         Sort sort = Sort.by("id").ascending().and(
             Sort.by("ownerId").ascending()
         );
